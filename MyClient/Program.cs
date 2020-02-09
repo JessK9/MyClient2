@@ -20,10 +20,7 @@ namespace MyClient
                 client.Connect("whois.net.dcs.hull.ac.uk", 43);
                 StreamWriter sw = new StreamWriter(client.GetStream());
                 StreamReader sr = new StreamReader(client.GetStream());
-                if (args.Length >= 1)
-                {
-
-
+                
                     if (args.Length == 0)
                     {
                         Console.WriteLine("There is no input");
@@ -44,13 +41,10 @@ namespace MyClient
                         string result = args[0] + " location changed to be " + args[1];
                         Console.WriteLine(result);
                     }
-                }
+                
                 //sr is reading what comes out of the server
                 // args is the user 
-                else
-                {
-                    Console.WriteLine("No arguments provided");
-                }
+               
             }
             catch
             {

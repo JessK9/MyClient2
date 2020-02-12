@@ -15,7 +15,7 @@ namespace MyClient
         {
             int c;
             TcpClient client = new TcpClient();
-            client.Connect("whois.net.dcs.hull.ac.uk", 43);
+            client.Connect("localhost", 43);
             StreamWriter sw = new StreamWriter(client.GetStream());
             StreamReader sr = new StreamReader(client.GetStream());
             if(args.Length == 0)

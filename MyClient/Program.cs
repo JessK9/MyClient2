@@ -25,6 +25,14 @@ namespace MyClient
 
                     else if (args.Length == 1)
                     {
+                        if(args[0] == "-h")  // in the spec -h is the name of the server  
+                            {
+                                // then args[1] will be the actual server name eg whois.net
+                            }
+                        if(args[0] == "-p")  // in the spec - is the port number 
+                            { 
+                                // then args[1] will be the port number 
+                            }
                         sw.WriteLine(args[0]);
                         sw.Flush();
                         string result = args[0] + " is " + sr.ReadToEnd();
@@ -39,8 +47,7 @@ namespace MyClient
                         Console.WriteLine(result);
                     }
                 
-                //sr is reading what comes out of the server
-                // args is the user 
+           
                
             }
             catch

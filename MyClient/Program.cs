@@ -13,7 +13,7 @@ namespace MyClient
     {
         static void Main(string[] args)
         {
-            
+            int c;
             string serverName = "whois.net.dcs.hull.ac.uk";
             int portNumber = 43;
             string protocol = "whois";

@@ -13,7 +13,6 @@ namespace MyClient
     {
         static void Main(string[] args)
         {
-            int c;
             string serverName = "whois.net.dcs.hull.ac.uk";
             int portNumber = 43;
             string protocol = "whois";
@@ -26,27 +25,35 @@ namespace MyClient
                 switch (args[i])
                 {
 
-                    case "-h": serverName = args[i + 1];
+                    case "-h":
+                        serverName = args[++i];
                         break;
-                    case "-p": portNumber = int.Parse(args[i + 1]);
+                    case "-p":
+                        portNumber = int.Parse(args[++i]);
                         break;
                     case "-h0":
-                        protocol = args[i + 1];
+                        protocol = args[i];
                         break;
                     case "-h1":
-                        protocol = args[i + 1];
+                        protocol = args[i];
                         break;
                     case "-h9":
-                        protocol = args[i + 1];
+                        protocol = args[i];
                         break;
                     default:
                         if (username == null)
                         {
                             username = args[i];
+
                         }
                         else if (location == null)
                         {
                             location = args[i];
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            return;
                         }
                         break;
 
@@ -57,6 +64,8 @@ namespace MyClient
             client.Connect(serverName, portNumber);
             StreamWriter sw = new StreamWriter(client.GetStream());
             StreamReader sr = new StreamReader(client.GetStream());
+            client.SendTimeout = 1000;
+            client.ReceiveTimeout = 1000;
 
             try
             {
@@ -68,22 +77,16 @@ namespace MyClient
                 {
                     switch (protocol)
                     {
+
                         case "whois":
-                            if (args.Length == 1) // finding location 
+                            if (location != null)  // changing location
                             {
-                                sw.WriteLine(args[0]);
-                                sw.Flush();
-                                string result = args[0] + " is " + sr.ReadToEnd();
-                                Console.WriteLine(result);
-                            }
-                            else if (args.Length == 2)  // changing location
-                            {
-                                sw.WriteLine(args[0] + ' ' + args[1]);
+                                sw.WriteLine(username + ' ' + location);
                                 sw.Flush();
                                 string reply = sr.ReadLine();
                                 if (reply == "OK")
                                 {
-                                    string result = args[0] + " location changed to be " + args[1];
+                                    string result = username + " location changed to be " + location;
                                     Console.WriteLine(result);
                                 }
                                 else
@@ -91,24 +94,28 @@ namespace MyClient
                                     Console.WriteLine("Something went wrong");
                                 }
                             }
+                          else  if (username != null) // finding location 
+                                 {
+                                sw.WriteLine(username);
+                                sw.Flush();
+                                string result = username + " is " + sr.ReadToEnd();
+                                Console.WriteLine(result);
+                                  }
+                            
                             break;
 
-                        case "-h9": // look at the protocols - HTTP/0.9
-                            if (args.Length == 1) // finding location 
+                        case "-h9": // HTTP/0.9
+                            if (location != null)  // changing location
                             {
-                                sw.WriteLine(args[0]);
+                                sw.WriteLine("PUT /" + username);
+                                sw.WriteLine();
+                                sw.WriteLine(location);
                                 sw.Flush();
-                                string result = args[0] + " is " + sr.ReadToEnd();
-                                Console.WriteLine(result);
-                            }
-                            else if (args.Length == 2)  // changing location
-                            {
-                                sw.WriteLine(args[0] + ' ' + args[1]);
-                                sw.Flush();
+                                
                                 string reply = sr.ReadLine();
-                                if (reply == "OK")
+                                if (reply.StartsWith("HTTP/0.9 200"))
                                 {
-                                    string result = args[0] + " location changed to be " + args[1];
+                                    string result = username + " location changed to be " + location;
                                     Console.WriteLine(result);
                                 }
                                 else
@@ -116,81 +123,156 @@ namespace MyClient
                                     Console.WriteLine("Something went wrong");
                                 }
                             }
+                            else if (username != null) // finding location 
+                            {
+                               
+                                sw.WriteLine("GET /" + username);
+                                sw.Flush();
+                                string line = sr.ReadLine();
+                                string[] split = line.Split(' ');
+                                if (split[1] == "200")
+                                {
+                                    do
+                                    {
+                                        line = sr.ReadLine();
+                                    } while (line.Length != 0);
+
+                                    string result = username + " is " + sr.ReadToEnd();
+                                    Console.WriteLine(result);
+                                }
+                                else if (split[1] == "404")
+                                {
+                                    Console.WriteLine("ERROR: Not Found");
+                                }
+                                
+                            }
+                           
                             break;
 
-                            case "-h0": //HTTP/1.0
-                                 if (args.Length == 1) // finding location 
-                                 {
-                                     sw.WriteLine(args[0]);
-                                     sw.Flush();
-                                     string result = args[0] + " is " + sr.ReadToEnd();
-                                     Console.WriteLine(result);
-                                 }
-                                 else if (args.Length == 2)  // changing location
-                                 {
-                                     sw.WriteLine(args[0] + ' ' + args[1]);
-                                     sw.Flush();
-                                     string reply = sr.ReadLine();
-                                     if (reply == "OK")
-                                     {
-                                         string result = args[0] + " location changed to be " + args[1];
-                                         Console.WriteLine(result);
-                                     }
-                                     else
-                                     {
-                                         Console.WriteLine("Something went wrong");
-                                     }
-                                 }
-                                 break;
-                           case "-h1": // HTTP/1.1
-                                 if (args.Length == 1) // finding location 
-                                 {
-                                sw.WriteLine(args[0]);
+                        case "-h0": //HTTP/1.0
+                            if (location != null)  // changing location
+                            {
+                                int locationLength = location.Length;
+                                sw.WriteLine("POST /" + username + " HTTP/1.0");
+                                sw.WriteLine("Content-Length: " + locationLength);
+                                sw.WriteLine();
+                                sw.WriteLine(location);
                                 sw.Flush();
-                                string result = args[0] + " is " + sr.ReadToEnd();
-                                Console.WriteLine(result);
-                                 }
-                                else if (args.Length == 2)  // changing location
+
+                                string reply = sr.ReadLine();
+                                if (reply.StartsWith("HTTP/1.0 200"))
                                 {
-                                    sw.WriteLine(args[0] + ' ' + args[1]);
-                                    sw.Flush();
-                                    string reply = sr.ReadLine();
-                                    if (reply == "OK")
-                                    {
-                                        string result = args[0] + " location changed to be " + args[1];
-                                        Console.WriteLine(result);
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Something went wrong");
-                                    }
+                                    string result = username + " location changed to be " + location;
+                                    Console.WriteLine(result);
                                 }
-                                 break;
+                                else
+                                {
+                                    Console.WriteLine("Something went wrong");
+                                }
+                              
+                            }
+                            else if (username != null) // finding location 
+                            {
+
+                                sw.WriteLine("GET /?" + username + " HTTP/1.0");
+                                sw.WriteLine();
+                                sw.Flush();
+                                string line = sr.ReadLine();
+                                string[] split = line.Split(' ');
+                                if (split[1] == "200")
+                                {
+                                    do
+                                    {
+                                        line = sr.ReadLine();
+                                    } while (line.Length != 0);
+
+                                    string result = username + " is " + sr.ReadToEnd();
+                                    Console.WriteLine(result);
+                                }
+                                else if (split[1] == "404")
+                                {
+                                    Console.WriteLine("ERROR: no entries found");
+                                }
+
+                            }
+                            break;
+
+                        case "-h1": // HTTP/1.1
+                            if (location != null)  // changing location
+                            {
+                               
+                                string everything = "name=" + username + "&location=" + location;
+                                int everythingLength = everything.Length;
+                                sw.WriteLine("POST /" + " HTTP/1.1");
+                                sw.WriteLine("Host: " + serverName);
+                                sw.WriteLine("Content-Length: " + everythingLength);
+                                sw.WriteLine();
+                                sw.WriteLine(everything);
+                                sw.Flush();
+
+                                string reply = sr.ReadLine();
+                                if (reply.StartsWith("HTTP/1.0 200"))
+                                {
+                                    string result = username + " location changed to be " + location;
+                                    Console.WriteLine(result);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Something went wrong");
+                                }
+                            }
+                            else if (username != null) // finding location 
+                            {
+
+                                sw.WriteLine("GET /?name=" + username + " HTTP/1.1");
+                                sw.WriteLine("Host: " + serverName);
+                                sw.WriteLine();
+                                sw.Flush();
+                                string line = sr.ReadLine();
+                                string[] split = line.Split(' ');
+                                if (split[1] == "200")
+                                {
+                                    do
+                                    {
+                                        line = sr.ReadLine();
+                                    } while (line.Length != 0);
+
+                                    string result = username + " is " + sr.ReadToEnd();
+                                    Console.WriteLine(result);
+                                }
+                                else if (split[1] == "404")
+                                {
+                                    Console.WriteLine("ERROR: no entries found");
+                                }
+
+                            }
+
+                            break;
                     }
                 }
             }
-                catch
+            catch
             {
-                Console.WriteLine("Something went wrong");
+                Console.WriteLine("Something went wrong here");
             }
-           
-           /*     else if (args.Length == 2)
-            {
 
-                sw.WriteLine(args[0] + ' ' + args[1]);
-                sw.Flush();
-                string reply = sr.ReadLine();
-                if (reply == "OK")
-                {
-                    string result = args[0] + " location changed to be " + args[1];
-                    Console.WriteLine(result);
-                }
-                else
-                {
-                    Console.WriteLine("Something went wrong");
-                }
-            }
-            */
+            /*     else if (args.Length == 2)
+             {
+
+                 sw.WriteLine(args[0] + ' ' + args[1]);
+                 sw.Flush();
+                 string reply = sr.ReadLine();
+                 if (reply == "OK")
+                 {
+                     string result = args[0] + " location changed to be " + args[1];
+                     Console.WriteLine(result);
+                 }
+                 else
+                 {
+                     Console.WriteLine("Something went wrong");
+                 }
+             }
+             */
 
 
             //sr is reading what comes out of the server

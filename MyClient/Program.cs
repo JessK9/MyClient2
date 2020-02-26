@@ -216,6 +216,12 @@ namespace MyClient
                                     string result = username + " location changed to be " + location;
                                     Console.WriteLine(result);
                                 }
+                                else if (reply.StartsWith("HTTP/1.0 301")) // three thing last one - dont need first half then a space and is the expected output
+                                {
+
+                                    string result = username + " location changed to be " + location;
+                                    Console.WriteLine(reply);
+                                }
                                 else
                                 {
                                     Console.WriteLine("Something went wrong");
@@ -240,6 +246,17 @@ namespace MyClient
                                     string result = username + " is " + sr.ReadToEnd();
                                     Console.WriteLine(result);
                                 }
+                                else if(split[1] == "301")
+                                {
+                                    do
+                                    {
+                                        line = sr.ReadLine();
+                                    } while (line.Length != 0);
+
+                                    string result = username + " is " + sr.ReadToEnd();
+                                    Console.WriteLine(result);
+                                }
+
                                 else if (split[1] == "404")
                                 {
                                     Console.WriteLine("ERROR: no entries found");

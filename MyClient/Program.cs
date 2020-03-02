@@ -158,18 +158,25 @@ namespace MyClient
                                 sw.WriteLine();
                                 sw.WriteLine(location);
                                 sw.Flush();
-
-                                string reply = sr.ReadLine();
-                                if (reply.StartsWith("HTTP/1.0 200"))
+                                
+                                string line = sr.ReadLine();
+                                string[] split = line.Split(' ');
+                                if (split[1] == "200" || split[1] == "304" || split[1] == "301")
                                 {
+                                    do
+                                    {
+                                        line = sr.ReadLine();
+                                    } while (line.Length != 0);
+
                                     string result = username + " location changed to be " + location;
                                     Console.WriteLine(result);
                                 }
-                                else
+
+
+                                else if (split[1] == "404")
                                 {
-                                    Console.WriteLine("Something went wrong");
+                                    Console.WriteLine("ERROR: no entries found");
                                 }
-                              
                             }
                             else if (username != null) // finding location 
                             {
@@ -210,21 +217,23 @@ namespace MyClient
                                 sw.WriteLine(everything);
                                 sw.Flush();
 
-                                string reply = sr.ReadLine();
-                                if (reply.StartsWith("HTTP/1.0 200"))
+                               
+                                string line = sr.ReadLine();
+                                string[] split = line.Split(' ');
+                                if (split[1] == "200" || split[1] == "304" || split[1] == "301")
                                 {
-                                    string result = username + " location changed to be " + location;
+                                    do
+                                    {
+                                        line = sr.ReadLine();
+                                    } while (line.Length != 0);
+
+                                    string result = username + " is " + sr.ReadToEnd();
                                     Console.WriteLine(result);
                                 }
-                                else if (reply.StartsWith("HTTP/1.0 301")) // three thing last one - dont need first half then a space and is the expected output
+                                
+                                else if (split[1] == "404")
                                 {
-
-                                    string result = username + " location changed to be " + location;
-                                    Console.WriteLine(reply);
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Something went wrong");
+                                    Console.WriteLine("ERROR: no entries found");
                                 }
                             }
                             else if (username != null) // finding location 
@@ -232,11 +241,16 @@ namespace MyClient
 
                                 sw.WriteLine("GET /?name=" + username + " HTTP/1.1");
                                 sw.WriteLine("Host: " + serverName);
+                                if(!serverName.Equals("localhost"))
+                                {
+                                    sw.WriteLine("Connection: close");
+                                }
                                 sw.WriteLine();
                                 sw.Flush();
+                                
                                 string line = sr.ReadLine();
                                 string[] split = line.Split(' ');
-                                if (split[1] == "200")
+                                if (split[1] == "200" || split[1] == "304" || split[1] =="301")
                                 {
                                     do
                                     {
@@ -246,16 +260,7 @@ namespace MyClient
                                     string result = username + " is " + sr.ReadToEnd();
                                     Console.WriteLine(result);
                                 }
-                                else if(split[1] == "301")
-                                {
-                                    do
-                                    {
-                                        line = sr.ReadLine();
-                                    } while (line.Length != 0);
-
-                                    string result = username + " is " + sr.ReadToEnd();
-                                    Console.WriteLine(result);
-                                }
+                                
 
                                 else if (split[1] == "404")
                                 {
@@ -273,28 +278,7 @@ namespace MyClient
                 Console.WriteLine("Something went wrong here");
             }
 
-            /*     else if (args.Length == 2)
-             {
-
-                 sw.WriteLine(args[0] + ' ' + args[1]);
-                 sw.Flush();
-                 string reply = sr.ReadLine();
-                 if (reply == "OK")
-                 {
-                     string result = args[0] + " location changed to be " + args[1];
-                     Console.WriteLine(result);
-                 }
-                 else
-                 {
-                     Console.WriteLine("Something went wrong");
-                 }
-             }
-             */
-
-
-            //sr is reading what comes out of the server
-            // args is the user 
-
+          
 
 
 

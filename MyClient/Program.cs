@@ -29,7 +29,7 @@ namespace MyClient
                         serverName = args[++i];
                         break;
                     case "-p":
-                        portNumber = int.Parse(args[++i]);
+                            portNumber = int.Parse(args[++i]);
                         break;
                     case "-h0":
                         protocol = args[i];
@@ -227,7 +227,7 @@ namespace MyClient
                                         line = sr.ReadLine();
                                     } while (line.Length != 0);
 
-                                    string result = username + " is " + sr.ReadToEnd();
+                                    string result = username + " location changed to be " + location;
                                     Console.WriteLine(result);
                                 }
                                 
@@ -235,6 +235,7 @@ namespace MyClient
                                 {
                                     Console.WriteLine("ERROR: no entries found");
                                 }
+                               
                             }
                             else if (username != null) // finding location 
                             {

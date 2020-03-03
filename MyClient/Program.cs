@@ -273,9 +273,11 @@ namespace MyClient
                     }
                 }
             }
-            catch
-            {
-                Console.WriteLine("Something went wrong here");
+            catch (Exception e)
+            { 
+            
+                    Console.WriteLine("Exception: " + e.ToString());
+                
             }
 
           

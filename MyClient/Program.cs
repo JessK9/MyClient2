@@ -107,9 +107,7 @@ namespace MyClient
                         case "-h9": // HTTP/0.9
                             if (location != null)  // changing location
                             {
-                                sw.WriteLine("PUT /" + username);
-                                sw.WriteLine();
-                                sw.WriteLine(location);
+                                sw.WriteLine("PUT /" + username + "\r\n" + location);
                                 sw.Flush();
                                 
                                 string reply = sr.ReadLine();
@@ -153,10 +151,8 @@ namespace MyClient
                             if (location != null)  // changing location
                             {
                                 int locationLength = location.Length;
-                                sw.WriteLine("POST /" + username + " HTTP/1.0");
-                                sw.WriteLine("Content-Length: " + locationLength);
-                                sw.WriteLine();
-                                sw.WriteLine(location);
+                                sw.WriteLine("POST /" + username + " HTTP/1.0" + "\r\n" + "Content-Length: " + locationLength + "\r\n" + location);
+                                
                                 sw.Flush();
                                 
                                 string line = sr.ReadLine();

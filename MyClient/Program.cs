@@ -91,7 +91,7 @@ namespace MyClient
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Something went wrong");
+                                    Console.WriteLine("Something went wrong - whois protocol");
                                 }
                             }
                           else  if (username != null) // finding location 
@@ -118,7 +118,7 @@ namespace MyClient
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Something went wrong");
+                                    Console.WriteLine("Something went wrong - HTTP/0.9 protocol");
                                 }
                             }
                             else if (username != null) // finding location 

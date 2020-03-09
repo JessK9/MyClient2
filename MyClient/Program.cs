@@ -64,7 +64,7 @@ namespace MyClient
             client.Connect(serverName, portNumber);
             StreamWriter sw = new StreamWriter(client.GetStream());
             StreamReader sr = new StreamReader(client.GetStream());
-            client.SendTimeout = 1000;
+           client.SendTimeout = 1000;
             client.ReceiveTimeout = 1000;
 
             try
@@ -98,7 +98,7 @@ namespace MyClient
                                  {
                                 sw.WriteLine(username);
                                 sw.Flush();
-                                string result = username + " is " + sr.ReadToEnd();
+                                string result = username + " is " + sr.ReadLine();
                                 Console.WriteLine(result);
                                   }
                             

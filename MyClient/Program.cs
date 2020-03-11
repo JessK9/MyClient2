@@ -19,44 +19,54 @@ namespace MyClient
             string username = null;
             string location = null;
 
-
-            for (int i = 0; i < args.Length; i++)
+            if (args.Length == 0)
             {
-                switch (args[i])
+                // Make user interface
+                Console.Write("  What is the hostname? "); serverName = Console.ReadLine();
+                Console.Write("  What is the port? "); portNumber = Convert.ToInt32(Console.ReadLine());
+                Console.Write("  What is the username? "); username = Console.ReadLine();
+                Console.Write("  What is the location? "); location = Console.ReadLine();
+            }
+            else if (args.Length != 0)
+            {
+                for (int i = 0; i < args.Length; i++)
                 {
+                    switch (args[i])
+                    {
 
-                    case "-h":
-                        serverName = args[++i];
-                        break;
-                    case "-p":
+                        case "-h":
+                            serverName = args[++i];
+                            break;
+                        case "-p":
                             portNumber = int.Parse(args[++i]);
-                        break;
-                    case "-h0":
-                        protocol = args[i];
-                        break;
-                    case "-h1":
-                        protocol = args[i];
-                        break;
-                    case "-h9":
-                        protocol = args[i];
-                        break;
-                    default:
-                        if (username == null)
-                        {
-                            username = args[i];
+                            break;
+                        case "-h0":
+                            protocol = args[i];
+                            break;
+                        case "-h1":
+                            protocol = args[i];
+                            break;
+                        case "-h9":
+                            protocol = args[i];
+                            break;
+                        default:
+                            if (username == null)
+                            {
+                                username = args[i];
 
-                        }
-                        else if (location == null)
-                        {
-                            location = args[i];
-                        }
-                        else
-                        {
-                            Console.WriteLine();
-                            return;
-                        }
-                        break;
+                            }
+                            else if (location == null)
+                            {
+                                location = args[i];
+                            }
+                            else
+                            {
+                                Console.WriteLine();
+                                return;
+                            }
+                            break;
 
+                    }
                 }
             }
 
@@ -64,16 +74,16 @@ namespace MyClient
             client.Connect(serverName, portNumber);
             StreamWriter sw = new StreamWriter(client.GetStream());
             StreamReader sr = new StreamReader(client.GetStream());
-           client.SendTimeout = 1000;
+            client.SendTimeout = 1000;
             client.ReceiveTimeout = 1000;
 
             try
             {
-                if (args.Length == 0)
+                if (args.Length == 0 && serverName == null)     //if the client is empty aswell
                 {
                     Console.WriteLine("There is no input");
                 }
-                else if (args.Length != 0)
+                else if (args.Length != 0 || serverName != null)            //if a serverName has been entered
                 {
                     switch (protocol)
                     {

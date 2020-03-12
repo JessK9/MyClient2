@@ -21,7 +21,7 @@ namespace MyClient
 
             if (args.Length == 0)
             {
-                // Make user interface
+                // the user interface   -  need to change 
                 Console.Write("  What is the hostname? "); serverName = Console.ReadLine();
                 Console.Write("  What is the port? "); portNumber = Convert.ToInt32(Console.ReadLine());
                 Console.Write("  What is the username? "); username = Console.ReadLine();

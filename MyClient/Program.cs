@@ -74,8 +74,8 @@ namespace MyClient
             client.Connect(serverName, portNumber);
             StreamWriter sw = new StreamWriter(client.GetStream());
             StreamReader sr = new StreamReader(client.GetStream());
-            client.SendTimeout = 1000;
-            client.ReceiveTimeout = 1000;
+           //client.SendTimeout = 1000;
+           // client.ReceiveTimeout = 1000;
 
             try
             {
@@ -219,7 +219,7 @@ namespace MyClient
                                 sw.WriteLine("POST /" + " HTTP/1.1");
                                 sw.WriteLine("Host: " + serverName);
                                 sw.WriteLine("Content-Length: " + everythingLength);
-                                sw.WriteLine();
+                                sw.WriteLine();  // remove this to work, dows not work if its this!
                                 sw.WriteLine(everything);
                                 sw.Flush();
 

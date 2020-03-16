@@ -7,26 +7,32 @@ using System.Net.Sockets;
 using System.IO;
 using System.Windows.Forms;
 
+
 namespace MyClient
 {
 
     public class Program
+
     {
+        public static string serverName = null;
+        public static int portNumber = 43;
+        public static int timeoutClient = 1000;
+        public static string username = null;
+        public static string location = null;
+        public static string protocol = null;
+        public static bool debug;
+
         static void Main(string[] args)
         {
-            string serverName = "whois.net.dcs.hull.ac.uk";
-            int portNumber = 43;
-            string protocol = "whois";
-            string username = null;
-            string location = null;
+           
 
             if (args.Length == 0)
             {
-                // the user interface   -  need to change 
-                Console.Write("  What is the hostname? "); serverName = Console.ReadLine();
-                Console.Write("  What is the port? "); portNumber = Convert.ToInt32(Console.ReadLine());
-                Console.Write("  What is the username? "); username = Console.ReadLine();
-                Console.Write("  What is the location? "); location = Console.ReadLine();
+                
+                 Application.EnableVisualStyles();
+                 Application.SetCompatibleTextRenderingDefault(false);
+                 Application.Run(new Form1());
+               
             }
             else if (args.Length != 0)
             {
@@ -49,6 +55,13 @@ namespace MyClient
                             break;
                         case "-h9":
                             protocol = args[i];
+                            break;
+                        case "-t":
+                            timeoutClient = int.Parse(args[++i]);
+                            Console.WriteLine("Timeout for the client has been changed to: " + timeoutClient);
+                            break;
+                        case "-d":
+                            debug = true;
                             break;
                         default:
                             if (username == null)
@@ -75,17 +88,11 @@ namespace MyClient
             client.Connect(serverName, portNumber);
             StreamWriter sw = new StreamWriter(client.GetStream());
             StreamReader sr = new StreamReader(client.GetStream());
-                                                                                                                      client.SendTimeout = 1000;
-                                                                                                                      client.ReceiveTimeout = 1000;
+            client.SendTimeout = Program.timeoutClient;
+            client.ReceiveTimeout = Program.timeoutClient;
 
             try
             {
-                if (args.Length == 0 && serverName == null)     //if the client is empty aswell
-                {
-                    Console.WriteLine("There is no input");
-                }
-                else if (args.Length != 0 || serverName != null)            //if a serverName has been entered
-                {
                     switch (protocol)
                     {
 
@@ -94,6 +101,10 @@ namespace MyClient
                             {
                                 sw.WriteLine(username + ' ' + location);
                                 sw.Flush();
+                                if (debug == true)
+                                {
+                                Console.WriteLine("This is an update protocol for whois and the username is: " + username + " and the location is: " + location);
+                                }
                                 string reply = sr.ReadLine();
                                 if (reply == "OK")
                                 {
@@ -106,22 +117,27 @@ namespace MyClient
                                 }
                             }
                           else  if (username != null) // finding location 
-                                 {
+                              {
                                 sw.WriteLine(username);
                                 sw.Flush();
                                 string result = username + " is " + sr.ReadLine();
                                 Console.WriteLine(result);
-                                  }
+                               }
                             
                             break;
 
-                        case "-h9": // HTTP/0.9
+                    case "-h9": case "HTTP/0.9": // HTTP/0.9
                             if (location != null)  // changing location
                             {
                                 sw.WriteLine("PUT /" + username + "\r\n" + location);
                                 sw.Flush();
-                                
-                                string reply = sr.ReadLine();
+
+                            if (debug == true)
+                            {
+                                Console.WriteLine("This is an update location for protocol HTTP/0.9 and the username is: " + username + " and the location is: " + location);
+                            }
+
+                            string reply = sr.ReadLine();
                                 if (reply.StartsWith("HTTP/0.9 200"))
                                 {
                                     string result = username + " location changed to be " + location;
@@ -136,7 +152,12 @@ namespace MyClient
                             {
                                
                                 sw.WriteLine("GET /" + username);
-                                sw.Flush();
+                            sw.Flush();
+                            if (debug == true)
+                            {
+                                Console.WriteLine("This is look-up for protocol whois and the username is: " + username);
+                            }
+                            
                                 string line = sr.ReadLine();
                                 string[] split = line.Split(' ');
                                 if (split[1] == "200")
@@ -145,7 +166,7 @@ namespace MyClient
                                     {
                                         line = sr.ReadLine();
                                     } while (line.Length != 0);
-
+                                    
                                     string result = username + " is " + sr.ReadToEnd();
                                     Console.WriteLine(result);
                                 }
@@ -158,15 +179,18 @@ namespace MyClient
                            
                             break;
 
-                        case "-h0": //HTTP/1.0
+                        case "-h0": case "HTTP/1.0": //HTTP/1.0
                             if (location != null)  // changing location
                             {
                                 int locationLength = location.Length;
                                 sw.WriteLine("POST /" + username + " HTTP/1.0" + "\r\n" + "Content-Length: " + locationLength + "\r\n" + location);
-                                
                                 sw.Flush();
-                                
-                                string line = sr.ReadLine();
+
+                            if (debug == true)
+                            {
+                                Console.WriteLine("This is a update location for protocol HTTP/1.0 and the username is: " + username);
+                            }
+                            string line = sr.ReadLine();
                                 string[] split = line.Split(' ');
                                 if (split[1] == "200" || split[1] == "304" || split[1] == "301")
                                 {
@@ -191,7 +215,11 @@ namespace MyClient
                                 sw.WriteLine("GET /?" + username + " HTTP/1.0");
                                 sw.WriteLine();
                                 sw.Flush();
-                                string line = sr.ReadLine();
+                            if (debug == true)
+                            {
+                                Console.WriteLine("This is look-up for protocol HTTP/1.0 and the username is: " + username);
+                            }
+                            string line = sr.ReadLine();
                                 string[] split = line.Split(' ');
                                 if (split[1] == "200")
                                 {
@@ -211,7 +239,7 @@ namespace MyClient
                             }
                             break;
 
-                        case "-h1": // HTTP/1.1
+                        case "-h1": case "HTTP/1.1":// HTTP/1.1
                             if (location != null)  // changing location
                             {
                                
@@ -223,9 +251,12 @@ namespace MyClient
                                 sw.WriteLine();// remove this to work, dows not work if its this!
                                 sw.WriteLine(everything);
                                 sw.Flush();
+                                if (debug == true)
+                                {
+                                    Console.WriteLine("This is a location update for protocol HTTP/1.1 and the username is: " + username + " and the location is: " + location);
+                                }
 
-                               
-                                string line = sr.ReadLine();
+                            string line = sr.ReadLine();
                                 string[] split = line.Split(' ');
                                 if (split[1] == "200" || split[1] == "304" || split[1] == "301")
                                 {
@@ -249,11 +280,11 @@ namespace MyClient
 
                                 sw.WriteLine("GET /?name=" + username + " HTTP/1.1");
                                 sw.WriteLine("Host: " + serverName);
-                                if(!serverName.Equals("localhost"))
-                                {
-                                    sw.WriteLine("Connection: close");
-                                }
-                                sw.WriteLine();
+                            if (debug == true)
+                            {
+                                Console.WriteLine("This is look-up for protocol HTTP/1.1 and the username is: " + username );
+                            }
+                            sw.WriteLine();
                                 sw.Flush();
                                 
                                 string line = sr.ReadLine();
@@ -279,7 +310,7 @@ namespace MyClient
 
                             break;
                     }
-                }
+                
             }
             catch (Exception e)
             { 

@@ -47,18 +47,36 @@ namespace MyClient
         private void sendButton_Click(object sender, EventArgs e)
         {
             Program.serverName = hostNameTB.Text;
-            int portNumberInt = int.Parse(portNumberTB.Text);
-            Program.portNumber = portNumberInt;
             Program.username = usernameTB.Text;
             Program.location = locationTB.Text;
             Program.protocol = protocolBox.SelectedItem.ToString();
 
-            Application.Exit();
+            int i;
+            if(!int.TryParse(timeoutTB.Text, out i) || !int.TryParse(portNumberTB.Text, out i))
+            {
+                MessageBox.Show("You can only enter numbers into this field, please try again","Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                int timeoutInt = int.Parse(timeoutTB.Text);
+              //  Program.timeoutClient = timeoutInt;
+                int portNumberInt = int.Parse(portNumberTB.Text);
+                Program.portNumber = portNumberInt;
+                Application.Exit();
+            }
+            
+            
         }
 
         private void protocolBox_SelectedIndexChanged(object sender, EventArgs e)
         {
            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Program.debug = true;
+            Application.Exit();
         }
     }
 }

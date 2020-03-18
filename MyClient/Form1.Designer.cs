@@ -39,6 +39,9 @@
             this.sendButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.protocolBox = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.timeoutTB = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // hostName
@@ -111,9 +114,9 @@
             // 
             // sendButton
             // 
-            this.sendButton.Location = new System.Drawing.Point(319, 252);
+            this.sendButton.Location = new System.Drawing.Point(246, 187);
             this.sendButton.Name = "sendButton";
-            this.sendButton.Size = new System.Drawing.Size(75, 23);
+            this.sendButton.Size = new System.Drawing.Size(107, 56);
             this.sendButton.TabIndex = 8;
             this.sendButton.Text = "Send";
             this.sendButton.UseVisualStyleBackColor = true;
@@ -142,11 +145,40 @@
             this.protocolBox.TabIndex = 10;
             this.protocolBox.SelectedIndexChanged += new System.EventHandler(this.protocolBox_SelectedIndexChanged);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(243, 47);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(48, 13);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Timeout:";
+            // 
+            // timeoutTB
+            // 
+            this.timeoutTB.Location = new System.Drawing.Point(246, 72);
+            this.timeoutTB.Name = "timeoutTB";
+            this.timeoutTB.Size = new System.Drawing.Size(100, 20);
+            this.timeoutTB.TabIndex = 12;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(246, 285);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(107, 55);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Debug";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.timeoutTB);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.protocolBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.sendButton);
@@ -179,5 +211,8 @@
         private System.Windows.Forms.Button sendButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox protocolBox;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox timeoutTB;
+        private System.Windows.Forms.Button button1;
     }
 }

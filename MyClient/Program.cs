@@ -14,12 +14,12 @@ namespace MyClient
     public class Program
 
     {
-        public static string serverName = null;
+        public static string serverName = "whois.net.dcs.hull.ac.uk";
         public static int portNumber = 43;
-        public static int timeoutClient = 1000;
+       // public static int timeoutClient = 1000;
         public static string username = null;
         public static string location = null;
-        public static string protocol = null;
+        public static string protocol = "whois";
         public static bool debug;
 
         static void Main(string[] args)
@@ -57,8 +57,8 @@ namespace MyClient
                             protocol = args[i];
                             break;
                         case "-t":
-                            timeoutClient = int.Parse(args[++i]);
-                            Console.WriteLine("Timeout for the client has been changed to: " + timeoutClient);
+                          //  timeoutClient = int.Parse(args[++i]);
+                          //  Console.WriteLine("Timeout for the client has been changed to: " + timeoutClient);
                             break;
                         case "-d":
                             debug = true;
@@ -88,8 +88,8 @@ namespace MyClient
             client.Connect(serverName, portNumber);
             StreamWriter sw = new StreamWriter(client.GetStream());
             StreamReader sr = new StreamReader(client.GetStream());
-            client.SendTimeout = Program.timeoutClient;
-            client.ReceiveTimeout = Program.timeoutClient;
+          //  client.SendTimeout = 1000;
+           // client.ReceiveTimeout = 1000;
 
             try
             {
@@ -101,10 +101,10 @@ namespace MyClient
                             {
                                 sw.WriteLine(username + ' ' + location);
                                 sw.Flush();
-                                if (debug == true)
+                               /* if (debug == true)
                                 {
                                 Console.WriteLine("This is an update protocol for whois and the username is: " + username + " and the location is: " + location);
-                                }
+                                }*/
                                 string reply = sr.ReadLine();
                                 if (reply == "OK")
                                 {
@@ -172,7 +172,7 @@ namespace MyClient
                                 }
                                 else if (split[1] == "404")
                                 {
-                                    Console.WriteLine("ERROR: Not Found");
+                                    Console.WriteLine("ERROR: No Entries Found");
                                 }
                                 
                             }

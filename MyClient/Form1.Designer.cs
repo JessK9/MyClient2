@@ -160,6 +160,7 @@
             this.timeoutTB.Name = "timeoutTB";
             this.timeoutTB.Size = new System.Drawing.Size(100, 20);
             this.timeoutTB.TabIndex = 12;
+            this.timeoutTB.TextChanged += new System.EventHandler(this.timeoutTB_TextChanged);
             // 
             // button1
             // 

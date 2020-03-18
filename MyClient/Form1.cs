@@ -50,6 +50,18 @@ namespace MyClient
             Program.username = usernameTB.Text;
             Program.location = locationTB.Text;
             Program.protocol = protocolBox.SelectedItem.ToString();
+            if(locationTB.Text == null)
+            {
+                Program.location = null;
+            }
+            if(timeoutTB.Text == null)
+            {
+                Program.timeoutClient = 1000;
+            }
+            if(usernameTB.Text == null)
+            {
+                MessageBox.Show("You must enter a username into this field to perform a lookup request, please try again", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
             int i;
             if(!int.TryParse(timeoutTB.Text, out i) || !int.TryParse(portNumberTB.Text, out i))
@@ -59,7 +71,7 @@ namespace MyClient
             else
             {
                 int timeoutInt = int.Parse(timeoutTB.Text);
-              //  Program.timeoutClient = timeoutInt;
+                Program.timeoutClient = timeoutInt;
                 int portNumberInt = int.Parse(portNumberTB.Text);
                 Program.portNumber = portNumberInt;
                 Application.Exit();
@@ -77,6 +89,11 @@ namespace MyClient
         {
             Program.debug = true;
             Application.Exit();
+        }
+
+        private void timeoutTB_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
